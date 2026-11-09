@@ -8,7 +8,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <AssemblyName>CustomFancyZone</AssemblyName>
     <RootNamespace>CustomFancyZone</RootNamespace>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <Product>CustomFancyZone</Product>
     <Description>Menu de dispositions personnalisé au survol du bouton Agrandir (Windows 11).</Description>
     <ApplicationIcon>app.ico</ApplicationIcon>

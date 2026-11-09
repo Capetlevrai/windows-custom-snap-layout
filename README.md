@@ -34,7 +34,7 @@ Windows 10 (1809+) or Windows 11, 64-bit. Nothing else to install, .NET is inclu
 
 | File | What it is |
 |---|---|
-| `CustomFancyZone-Setup-x.y.z.exe` | **Recommended.** Per-user installer, no admin rights. Adds a Start menu shortcut and an optional "start with Windows". Uninstall from *Settings > Apps*. |
+| `CustomFancyZone-Setup-x.y.z.exe` | **Recommended.** Per-user installer, no admin rights. Turns off the Windows snap menu on hover for you, adds a Start menu shortcut and an optional "start with Windows". Uninstall from *Settings > Apps*. |
 | `CustomFancyZone.exe` | Portable version: put it anywhere and run it. `layouts.json` is created next to it. |
 
 The executables aren't signed, so Windows SmartScreen may say "Windows protected your PC":
@@ -43,10 +43,15 @@ click *More info > Run anyway*.
 ## Quick start
 
 1. **Run CustomFancyZone.** An icon appears in the notification area (next to the clock, maybe behind the ^ arrow).
-2. **Turn off the Windows menu**, otherwise both menus show up on top of each other:
-   *Settings > System > Multitasking > Snap windows* (expand it), then untick
-   "Show snap layouts when I hover over a window's maximize button". The app reminds you on start-up; clicking
-   the notification opens the right page.
+2. **The Windows menu must be off**, otherwise both menus show up on top of each other. The installer does it
+   for you (option ticked by default) and puts it back when you uninstall. With the portable version, click the
+   notification shown at start-up, or the tray menu entry. Either way, Windows Explorer restarts for a second to
+   apply it (the taskbar blinks and open File Explorer windows close).
+
+   The result in *Settings > System > Multitasking > Snap windows*: only "Show snap layouts when I hover over a
+   window's maximize button" is unticked, everything else stays as it was.
+
+   ![Windows Snap settings: only the hover option is unticked](docs/windows-snap-settings.png)
 3. **Hover** the Maximize button of a window for 0.4 s and **click a zone**.
 4. **Pick** the window that goes next to it in the empty zone (or press Esc).
 
@@ -129,8 +134,8 @@ Optional **`zoom`** gives a zoom level in % for the window placed in each zone (
 - Windows running **as administrator** can't be detected or moved unless CustomFancyZone also runs as administrator.
 - Apps with **no window buttons at all** (e.g. Discord clients using a Discord-style title bar) offer nothing to
   hover. Switching them to the native title bar fixes it.
-- Windows only applies its own "snap layouts on hover" setting live through the Settings app, so it has to be
-  unticked by hand once.
+- Windows only re-reads its "snap layouts on hover" setting when Explorer starts, so turning it off or on
+  restarts Explorer.
 - No snap groups, no keyboard navigation in Snap Assist.
 - The interface is in French.
 
@@ -139,7 +144,7 @@ Optional **`zoom`** gives a zoom level in % for the window placed in each zone (
 | Problem | Try |
 |---|---|
 | Nothing opens | Is the tray icon there, is the app paused? `CustomFancyZone.exe --hittest X Y` on the button should answer `hit 9`. |
-| Two menus on top of each other | The Windows menu is still enabled (Quick start, step 2). |
+| Two menus on top of each other | The Windows menu is still enabled: tray icon > *Menu natif de Windows : actif (le désactiver…)*, or untick it in Settings (Quick start, step 2). |
 | A `layouts.json` change does nothing | A notification should explain why; otherwise run `--check`. |
 | Anything odd | Set `"debugLog": true` and read `CustomFancyZone.log`. |
 
@@ -155,6 +160,7 @@ Add `| Out-String` in PowerShell to see the output (it's a windowed app).
 | `--place HWND LAYOUT ZONE` | Places a window without the menu (0-based indices). |
 | `--assist HWND LAYOUT ZONE [HWND…]` | Places a window then starts Snap Assist (optionally limited to the given windows). |
 | `--zoom HWND +\|-\|0\|PERCENT` | Zooms a window. |
+| `--native off\|restore` | Turns the Windows snap menu on hover off, or puts it back (restarts Explorer). |
 | `--demo [SECONDS] [LAYOUT ZONE]` | Shows the menu in the middle of the screen. |
 | `--quit` | Closes the running instance. |
 
@@ -163,10 +169,10 @@ Add `| Out-String` in PowerShell to see the output (it's a windowed app).
 ## Uninstall
 
 - **Installer version:** *Settings > Apps > Installed apps > CustomFancyZone > Uninstall*. The app is closed,
-  its start-up entry and its folder are removed.
-- **Portable version:** tray icon > untick "start with Windows", quit, then delete the exe and `layouts.json`.
-
-Then tick the Windows option again (*Settings > System > Multitasking > Snap windows*) to get the Windows menu back.
+  its start-up entry and its folder are removed, and the Windows snap menu on hover is ticked again (Explorer
+  restarts for a second).
+- **Portable version:** tray icon > *Menu natif de Windows… (le réactiver…)*, untick "start with Windows", quit,
+  then delete the exe and `layouts.json`.
 
 ## Building
 

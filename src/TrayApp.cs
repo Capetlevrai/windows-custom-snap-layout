@@ -48,7 +48,7 @@ internal sealed class TrayApp : ApplicationContext
         _store.EnsureFile();
         var problems = _store.Load();
 
-        _nativeItem = new ToolStripMenuItem("Menu natif de Windows…", null, (_, _) => NativeSnap.OpenSettings());
+        _nativeItem = new ToolStripMenuItem("Menu natif de Windows…", null, (_, _) => ToggleNative());
         _startupItem = new ToolStripMenuItem("Lancer avec Windows", null, (_, _) => ToggleStartup());
         _pauseItem = new ToolStripMenuItem("Pause", null, (_, _) => TogglePause());
         _tray = new NotifyIcon
@@ -61,7 +61,7 @@ internal sealed class TrayApp : ApplicationContext
         _tray.DoubleClick += (_, _) => OpenConfig();
         _tray.BalloonTipClicked += (_, _) =>
         {
-            if (_balloonIsNativeWarning) NativeSnap.OpenSettings();
+            if (_balloonIsNativeWarning && NativeSnap.IsEnabled()) ToggleNative();
         };
         _tray.ContextMenuStrip.Opening += (_, _) => RefreshMenu();
 
@@ -420,15 +420,39 @@ internal sealed class TrayApp : ApplicationContext
     {
         _balloonIsNativeWarning = true;
         _tray.ShowBalloonTip(10000, "CustomFancyZone : le menu de Windows est encore actif",
-            "Les deux menus vont se superposer. Clique ici, ouvre « Ancrer les fenêtres » et décoche " +
-            "« Afficher les dispositions d'ancrage lorsque je survole le bouton… ».", ToolTipIcon.Info);
+            "Les deux menus vont se superposer. Clique ici pour désactiver celui de Windows.", ToolTipIcon.Info);
+    }
+
+    /// <summary>Désactive ou rétablit le menu de Windows, après confirmation (l'Explorateur redémarre).</summary>
+    private void ToggleNative()
+    {
+        bool enabled = NativeSnap.IsEnabled();
+        string question = enabled
+            ? "Désactiver le menu d'ancrage de Windows (survol du bouton Agrandir) ?\n\n" +
+              "Sinon les deux menus se superposent. Pour appliquer le réglage, l'Explorateur Windows redémarre : " +
+              "la barre des tâches disparaît une seconde et les fenêtres de l'Explorateur de fichiers se ferment."
+            : "Réactiver le menu d'ancrage de Windows ?\n\n" +
+              "Il s'affichera en plus de celui de CustomFancyZone. L'Explorateur Windows redémarre pour l'appliquer.";
+        if (MessageBox.Show(question, AppName, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) != DialogResult.OK)
+            return;
+        try
+        {
+            if (enabled) NativeSnap.Disable();
+            else NativeSnap.Restore();
+        }
+        catch (Exception ex)
+        {
+            Log.Write("Réglage du menu natif impossible : " + ex.Message);
+            NativeSnap.OpenSettings();
+        }
+        RefreshMenu();
     }
 
     private void RefreshMenu()
     {
         _nativeItem.Text = NativeSnap.IsEnabled()
             ? "Menu natif de Windows : actif (le désactiver…)"
-            : "Menu natif de Windows : désactivé (réglage…)";
+            : "Menu natif de Windows : désactivé (le réactiver…)";
         _startupItem.Checked = IsStartupEnabled();
         _pauseItem.Checked = _paused;
     }

@@ -36,6 +36,7 @@ CloseApplications=no
 Name: "french"; MessagesFile: "compiler:Languages\French.isl"
 
 [Tasks]
+Name: "nativeflyout"; Description: "Désactiver le menu d'ancrage de Windows au survol du bouton Agrandir (sinon les deux menus se superposent). L'Explorateur Windows redémarre une seconde ; il est rétabli à la désinstallation."; GroupDescription: "Options :"
 Name: "autostart"; Description: "Lancer CustomFancyZone au démarrage de Windows"; GroupDescription: "Options :"
 Name: "desktopicon"; Description: "Créer une icône sur le Bureau"; GroupDescription: "Options :"; Flags: unchecked
 
@@ -53,10 +54,12 @@ Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: 
     ValueData: """{app}\CustomFancyZone.exe"""; Tasks: autostart
 
 [Run]
+Filename: "{app}\CustomFancyZone.exe"; Parameters: "--native off"; StatusMsg: "Désactivation du menu d'ancrage de Windows…"; Flags: runhidden waituntilterminated; Tasks: nativeflyout
 Filename: "{app}\CustomFancyZone.exe"; Description: "Lancer CustomFancyZone maintenant"; Flags: nowait postinstall skipifsilent
 
 [UninstallRun]
 Filename: "{app}\CustomFancyZone.exe"; Parameters: "--quit"; Flags: runhidden waituntilterminated; RunOnceId: "QuitApp"
+Filename: "{app}\CustomFancyZone.exe"; Parameters: "--native restore"; Flags: runhidden waituntilterminated; RunOnceId: "RestoreNativeFlyout"
 
 [UninstallDelete]
 Type: files; Name: "{app}\layouts.json"

@@ -79,6 +79,19 @@ internal static class Cli
                 return ok ? 0 : 1;
             }
 
+            case "--native" when args.Length >= 2:
+            {
+                // Utilisé par l'installeur : « off » à l'installation, « restore » à la désinstallation.
+                bool changed = args[1].ToLowerInvariant() switch
+                {
+                    "off" => NativeSnap.Disable(),
+                    "restore" or "on" => NativeSnap.Restore(),
+                    _ => throw new ArgumentException("--native off|restore"),
+                };
+                Console.WriteLine(changed ? "Réglage appliqué (Explorateur redémarré)." : "Rien à changer.");
+                return 0;
+            }
+
             case "--zoom" when args.Length >= 3:
             {
                 var hwnd = new IntPtr(ParseHandle(args[1]));
@@ -108,6 +121,7 @@ internal static class Cli
                       --assist HWND DISPO ZONE [HWND…]  place une fenêtre puis lance l'assistance d'ancrage
                                                    (HWND… = seules fenêtres proposées, pour les tests)
                       --zoom HWND +|-|0|POURCENT   zoome une fenêtre (Ctrl + / Ctrl − / Ctrl 0)
+                      --native off|restore         désactive / rétablit le menu d'ancrage de Windows
                       --demo [SECONDES] [DISPO ZONE]  affiche le menu au centre de l'écran
                       --quit                       ferme l'instance en cours
                     """);

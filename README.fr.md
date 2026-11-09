@@ -34,7 +34,7 @@ Windows 10 (1809+) ou Windows 11, 64 bits. Rien d'autre à installer : .NET est 
 
 | Fichier | Rôle |
 |---|---|
-| `CustomFancyZone-Setup-x.y.z.exe` | **Recommandé.** Installation pour ton compte, sans droits administrateur. Raccourci dans le menu Démarrer et option « Lancer au démarrage de Windows ». Désinstallation depuis *Paramètres > Applications*. |
+| `CustomFancyZone-Setup-x.y.z.exe` | **Recommandé.** Installation pour ton compte, sans droits administrateur. Désactive pour toi le menu d'ancrage de Windows au survol, ajoute un raccourci dans le menu Démarrer et l'option « Lancer au démarrage de Windows ». Désinstallation depuis *Paramètres > Applications*. |
 | `CustomFancyZone.exe` | Version portable : à poser où tu veux et à lancer. `layouts.json` est créé à côté. |
 
 Les exe ne sont pas signés : si Windows SmartScreen affiche « Windows a protégé votre ordinateur »,
@@ -44,10 +44,16 @@ clique *Informations complémentaires > Exécuter quand même*.
 
 1. **Lance CustomFancyZone.** Une icône apparaît dans la zone de notification (à côté de l'horloge, parfois
    derrière la flèche ^).
-2. **Coupe le menu de Windows**, sinon les deux menus se superposent :
-   *Paramètres > Système > Multitâche > Ancrer les fenêtres* (déplier), puis décoche
-   « Afficher les dispositions d'ancrage lorsque je survole le bouton permettant de développer une fenêtre ».
-   L'outil te le rappelle au démarrage ; un clic sur la notification ouvre la bonne page.
+2. **Le menu de Windows doit être coupé**, sinon les deux menus se superposent. L'installeur s'en charge (option
+   cochée par défaut) et le rétablit à la désinstallation. Avec la version portable, clique la notification
+   affichée au démarrage, ou l'entrée du menu de l'icône. Dans tous les cas, l'Explorateur Windows redémarre une
+   seconde pour l'appliquer (la barre des tâches clignote et les fenêtres de l'Explorateur de fichiers se ferment).
+
+   Résultat dans *Paramètres > Système > Multitâche > Ancrer les fenêtres* : seule l'option « Afficher les
+   dispositions d'ancrage lorsque je survole le bouton permettant de développer une fenêtre » est décochée, le
+   reste ne change pas.
+
+   ![Réglages d'ancrage de Windows : seule l'option de survol est décochée](docs/windows-snap-settings.png)
 3. **Survole** le bouton Agrandir d'une fenêtre pendant 0,4 s et **clique une zone**.
 4. **Choisis** la fenêtre qui va à côté dans la zone vide (ou Échap).
 
@@ -135,8 +141,8 @@ L'option **`zoom`** donne un zoom en % pour la fenêtre placée dans chaque zone
   est lui aussi lancé en administrateur.
 - Les applis **sans aucun bouton de fenêtre** (par exemple des clients Discord avec une barre de titre façon
   Discord) n'offrent rien à survoler. Passer à la barre de titre native règle le problème.
-- Windows n'applique son option « dispositions au survol » à chaud que depuis l'appli Paramètres : il faut la
-  décocher à la main une fois.
+- Windows ne relit son option « dispositions au survol » qu'au démarrage de l'Explorateur : la couper ou la
+  rétablir redémarre donc l'Explorateur.
 - Pas de groupes d'ancrage, pas de navigation au clavier dans l'assistance.
 
 ## Dépannage
@@ -144,7 +150,7 @@ L'option **`zoom`** donne un zoom en % pour la fenêtre placée dans chaque zone
 | Problème | Piste |
 |---|---|
 | Rien ne s'ouvre | L'icône est-elle là, l'outil en pause ? `CustomFancyZone.exe --hittest X Y` sur le bouton doit répondre `hit 9`. |
-| Deux menus superposés | Le menu de Windows est encore actif (démarrage rapide, étape 2). |
+| Deux menus superposés | Le menu de Windows est encore actif : icône > *Menu natif de Windows : actif (le désactiver…)*, ou le décocher dans Paramètres (démarrage rapide, étape 2). |
 | Une modification de `layouts.json` n'a pas d'effet | Une notification a dû expliquer pourquoi ; sinon lancer `--check`. |
 | Comportement étrange | Mettre `"debugLog": true` et lire `CustomFancyZone.log`. |
 
@@ -160,6 +166,7 @@ Ajouter `| Out-String` dans PowerShell pour voir la sortie (c'est une applicatio
 | `--place HWND DISPO ZONE` | Place une fenêtre sans le menu (index à partir de 0). |
 | `--assist HWND DISPO ZONE [HWND…]` | Place une fenêtre puis lance l'assistance (éventuellement limitée aux fenêtres données). |
 | `--zoom HWND +\|-\|0\|POURCENT` | Zoome une fenêtre. |
+| `--native off\|restore` | Coupe ou rétablit le menu d'ancrage de Windows au survol (redémarre l'Explorateur). |
 | `--demo [SECONDES] [DISPO ZONE]` | Affiche le menu au centre de l'écran. |
 | `--quit` | Ferme l'instance en cours. |
 
@@ -168,12 +175,10 @@ Ajouter `| Out-String` dans PowerShell pour voir la sortie (c'est une applicatio
 ## Désinstaller
 
 - **Version installée :** *Paramètres > Applications > Applications installées > CustomFancyZone > Désinstaller*.
-  L'outil est fermé, son lancement automatique et son dossier sont supprimés.
-- **Version portable :** icône > décocher « Lancer avec Windows », « Quitter », puis supprimer l'exe et
-  `layouts.json`.
-
-Recoche ensuite l'option de Windows (*Paramètres > Système > Multitâche > Ancrer les fenêtres*) pour retrouver
-son menu.
+  L'outil est fermé, son lancement automatique et son dossier sont supprimés, et le menu d'ancrage de Windows au
+  survol est recoché (l'Explorateur redémarre une seconde).
+- **Version portable :** icône > *Menu natif de Windows… (le réactiver…)*, décocher « Lancer avec Windows »,
+  « Quitter », puis supprimer l'exe et `layouts.json`.
 
 ## Compiler
 
