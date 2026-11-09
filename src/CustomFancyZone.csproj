@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>CustomFancyZone</AssemblyName>
+    <RootNamespace>CustomFancyZone</RootNamespace>
+    <Version>1.0.0</Version>
+    <Product>CustomFancyZone</Product>
+    <Description>Menu de dispositions personnalisé au survol du bouton Agrandir (Windows 11).</Description>
+    <ApplicationIcon>app.ico</ApplicationIcon>
+    <Company>Capetlevrai</Company>
+    <Copyright>Capetlevrai</Copyright>
+
+    <!-- Publication : un seul .exe, qui utilise le runtime .NET Desktop déjà installé. -->
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>false</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <DebugType>embedded</DebugType>
+    <SatelliteResourceLanguages>fr</SatelliteResourceLanguages>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="layouts.default.json" LogicalName="layouts.default.json" />
+  </ItemGroup>
+
+</Project>
